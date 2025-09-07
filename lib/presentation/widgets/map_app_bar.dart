@@ -29,12 +29,13 @@ class MapAppBar extends StatelessWidget implements PreferredSizeWidget {
         style: TextStyle(fontSize: 16, color: colorApp.onPrimary),
       ),
       centerTitle: false,
-      backgroundColor: Theme.of(context).colorScheme.primary,
+      backgroundColor: colorApp.primary,
       elevation: 2,
       shadowColor: colorApp.shadow,
       actions: [
         IconButton(
           icon: const Icon(Icons.refresh_rounded),
+          color: colorApp.onPrimary,
           onPressed: () {
             context.read<MapBloc>().add(MapInitialized());
           },
@@ -55,8 +56,8 @@ class MapAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   AppBar _buildEditingAppBar(BuildContext context) {
+    final colorApp = Theme.of(context).colorScheme;
     return AppBar(
-      backgroundColor: Colors.amber.shade700,
       title: const Text('Dibujando Polígono'),
       leading: IconButton(
         tooltip: 'Cancelar',
@@ -66,10 +67,14 @@ class MapAppBar extends StatelessWidget implements PreferredSizeWidget {
       actions: [
         IconButton(
           tooltip: 'Guardar Polígono',
-          icon: const Icon(Icons.save),
+          icon: const Icon(Icons.save_rounded),
           onPressed: () => context.read<MapBloc>().add(SavePolygon()),
         ),
       ],
+      centerTitle: false,
+      backgroundColor: colorApp.primaryContainer,
+      elevation: 2,
+      shadowColor: colorApp.shadow,
     );
   }
 
