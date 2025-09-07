@@ -15,6 +15,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   arcgis.GeometryEditor geometryEditor;
   final _graphicsOverlay = arcgis.GraphicsOverlay();
   final MapRepository mapRepository;
+  arcgis.Graphic? _originalGraphicBeingEdited; // To store the graphic being edited
 
   MapBloc({
     required this.mapViewController, 
@@ -52,8 +53,11 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       ),
     );
 
-    mapViewController.geometryEditor = geometryEditor;
-    mapViewController.graphicsOverlays.add(_graphicsOverlay);
+    mapViewController.geometryEditor ??= geometryEditor;
+
+    // Clear existing graphics overlays before adding the one managed by the BLoC
+    mapViewController.graphicsOverlays.clear(); // <--- Added this line
+    mapViewController.graphicsOverlays.add(_graphicsOverlay); // <--- Removed conditional check
 
     // Emite el estado de éxito una vez que el mapa está configurado.
     emit(const MapLoadSuccess(isGpsEnabled: false));
@@ -122,6 +126,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
           _graphicsOverlay.graphics.add(graphic);
       }
 
+      _originalGraphicBeingEdited = null; // Clear the reference after saving
+
       geometryEditor.stop();
       emit((state as MapLoadSuccess).copyWith(isEditing: false));
     }
@@ -131,6 +137,15 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     if (state is MapLoadSuccess) {
       geometryEditor.stop();
       _graphicsOverlay.graphics.clear(); // Clear the graphic being edited/drawn
+
+      if (_originalGraphicBeingEdited != null) {
+        // If we were editing an existing graphic, restore it
+        _graphicsOverlay.graphics.add(_originalGraphicBeingEdited!); // Restore the original graphic
+        _originalGraphicBeingEdited = null; // Clear the reference
+      }
+      // If _originalGraphicBeingEdited is null, it means we were drawing a new one,
+      // and _graphicsOverlay.graphics.clear() already handled it.
+
       emit((state as MapLoadSuccess).copyWith(isEditing: false));
     }
   }
@@ -159,6 +174,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       if (geometryEditor.isStarted) {
         geometryEditor.stop();
       }
+      _originalGraphicBeingEdited = event.graphic; // Store the original graphic
       _graphicsOverlay.graphics.clear(); // Clear existing graphics
       geometryEditor.startWithGeometry(event.graphic.geometry!);
       _graphicsOverlay.graphics.add(event.graphic); // Add the graphic back for editing visualization
@@ -176,5 +192,11 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     if (geometryEditor.canRedo) {
       geometryEditor.redo();
     }
+  }
+
+  @override
+  Future<void> close() {
+    mapViewController.dispose();
+    return super.close();
   }
 }
