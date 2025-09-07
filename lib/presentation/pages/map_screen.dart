@@ -16,13 +16,6 @@ class MapScreen extends StatefulWidget {
 
 class _MapScreenState extends State<MapScreen> {
   @override
-  void dispose() {
-    // El BLoC ahora es responsable del controlador.
-    context.read<MapBloc>().close();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const MapAppBar(),

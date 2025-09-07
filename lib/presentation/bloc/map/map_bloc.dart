@@ -2,21 +2,25 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:curso_arcgis_flutter/data/repositories/map/map_repository.dart';
 import 'package:equatable/equatable.dart';
 import 'package:arcgis_maps/arcgis_maps.dart' as arcgis;
 import 'package:flutter/material.dart';
 
-part 'map_bloc_event.dart';
-part 'map_bloc_state.dart';
+part 'map_event.dart';
+part 'map_state.dart';
 
 class MapBloc extends Bloc<MapEvent, MapState> {
   arcgis.ArcGISMapViewController mapViewController;
   arcgis.GeometryEditor geometryEditor;
   final _graphicsOverlay = arcgis.GraphicsOverlay();
+  final MapRepository mapRepository;
 
-  MapBloc(
-      {required this.mapViewController, required this.geometryEditor})
-      : super(MapInitial()) {
+  MapBloc({
+    required this.mapViewController, 
+    required this.geometryEditor,
+    required this.mapRepository,
+  }) : super(MapInitial()) {
     on<MapInitialized>(_onMapInitialized);
     on<GpsToggled>(_onGpsToggled);
     on<ZoomIn>(_onZoomIn);
@@ -35,16 +39,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     final map = arcgis.ArcGISMap.withBasemapStyle(
       arcgis.BasemapStyle.openStreets,
     );
-    final Uri uri = Uri.parse(
-      'https://services5.arcgis.com/xZWz93fd6IlyKPjJ/arcgis/rest/services/Centros_Poblados_Margarita/FeatureServer/2',
-    );
-
-    map.operationalLayers.add(
-      arcgis.FeatureLayer.withFeatureTable(
-        arcgis.ServiceFeatureTable.withUri(uri),
-      ),
-    );
-
+    map.operationalLayers.add(mapRepository.getPobladosLayer());
     mapViewController.locationDisplay.dataSource = arcgis.SystemLocationDataSource();
     mapViewController.arcGISMap = map;
     mapViewController.setViewpoint(
