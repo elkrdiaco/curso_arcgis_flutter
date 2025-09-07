@@ -12,6 +12,7 @@ class GpsControlButton extends StatelessWidget {
       mini: true,
       heroTag: 'my_location',
       elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)), // Added shape
       onPressed: () => context.read<MapBloc>().add(GpsToggled()),
       child: Icon(
         isGpsEnabled

@@ -11,11 +11,28 @@ abstract class MapEvent extends Equatable {
 class MapInitialized extends MapEvent {}
 class GpsToggled extends MapEvent {}
 
-//Zoom events
-class ZoomIn extends MapEvent {}
-class ZoomOut extends MapEvent {}
-
 //Created events for polygon editing
 class StartPolygonEditing extends MapEvent {}
 class SavePolygon extends MapEvent {}
 class CancelEditing extends MapEvent {}
+
+class MapTapped extends MapEvent {
+  final Offset point;
+
+  const MapTapped(this.point);
+
+  @override
+  List<Object> get props => [point];
+}
+
+class GraphicTapped extends MapEvent {
+  final arcgis.Graphic graphic;
+
+  const GraphicTapped(this.graphic);
+
+  @override
+  List<Object> get props => [graphic];
+}
+
+class UndoGeometryEditor extends MapEvent {}
+class RedoGeometryEditor extends MapEvent {}

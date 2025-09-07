@@ -1,3 +1,4 @@
+import 'package:curso_arcgis_flutter/config/context_extension.dart';
 import 'package:curso_arcgis_flutter/presentation/bloc/map/map_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -22,20 +23,19 @@ class MapAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   AppBar _buildDefaultAppBar(BuildContext context) {
-    final colorApp = Theme.of(context).colorScheme;
     return AppBar(
       title: Text(
         'ArcGIS Maps SDK for Flutter',
-        style: TextStyle(fontSize: 16, color: colorApp.onPrimary),
+        style: TextStyle(fontSize: 16, color: context.colorApp.onPrimary),
       ),
       centerTitle: false,
-      backgroundColor: colorApp.primary,
+      backgroundColor: context.colorApp.primary,
       elevation: 2,
-      shadowColor: colorApp.shadow,
+      shadowColor: context.colorApp.shadow,
       actions: [
         IconButton(
           icon: const Icon(Icons.refresh_rounded),
-          color: colorApp.onPrimary,
+          color: context.colorApp.onPrimary,
           onPressed: () {
             context.read<MapBloc>().add(MapInitialized());
           },
@@ -46,7 +46,7 @@ class MapAppBar extends StatelessWidget implements PreferredSizeWidget {
         icon: SvgPicture.asset(
           'assets/images/ic_layers.svg',
           colorFilter: ColorFilter.mode(
-            colorApp.onPrimary,
+            context.colorApp.onPrimary,
             BlendMode.srcIn,
           ),
         ),
@@ -56,7 +56,6 @@ class MapAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   AppBar _buildEditingAppBar(BuildContext context) {
-    final colorApp = Theme.of(context).colorScheme;
     return AppBar(
       title: const Text('Dibujando Polígono'),
       leading: IconButton(
@@ -72,9 +71,9 @@ class MapAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
       ],
       centerTitle: false,
-      backgroundColor: colorApp.primaryContainer,
+      backgroundColor: context.colorApp.primary, // Added for consistency
       elevation: 2,
-      shadowColor: colorApp.shadow,
+      shadowColor: context.colorApp.shadow, // Added for consistency
     );
   }
 

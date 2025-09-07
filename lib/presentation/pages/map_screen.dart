@@ -1,11 +1,11 @@
 import 'package:curso_arcgis_flutter/presentation/bloc/map/map_bloc.dart';
+import 'package:curso_arcgis_flutter/presentation/widgets/editing_controls.dart';
 import 'package:curso_arcgis_flutter/presentation/widgets/gps_control_button.dart';
 import 'package:curso_arcgis_flutter/presentation/widgets/map_app_bar.dart';
 import 'package:curso_arcgis_flutter/presentation/widgets/edit_fab.dart';
-import 'package:curso_arcgis_flutter/presentation/widgets/zoom_controls.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:arcgis_maps/arcgis_maps.dart' as arcgis;
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
@@ -23,17 +23,15 @@ class _MapScreenState extends State<MapScreen> {
         builder: (context, state) {
           return Stack(
             children: [
-              ArcGISMapView(
+              arcgis.ArcGISMapView(
                   controllerProvider: () =>
-                      context.read<MapBloc>().mapViewController,
+                    context.read<MapBloc>().mapViewController,
                   onMapViewReady: () =>
-                      context.read<MapBloc>().add(MapInitialized())),
+                    context.read<MapBloc>().add(MapInitialized()),
+                  onTap: (screenPoint) =>
+                    context.read<MapBloc>().add(MapTapped(Offset(screenPoint.dx, screenPoint.dy))),
+              ),
               if (state is MapLoadSuccess) ...[
-                Positioned(
-                  bottom: 40,
-                  right: 10,
-                  child: const ZoomControls(),
-                ),
                 Positioned(
                   top: 10,
                   left: 10,
@@ -46,6 +44,7 @@ class _MapScreenState extends State<MapScreen> {
                     isGpsEnabled: state.isGpsEnabled,
                   ),
                 ),
+                  EditingControls(isEditing: state.isEditing),
               ] else ...[
                 const Center(child: LinearProgressIndicator()),
               ]

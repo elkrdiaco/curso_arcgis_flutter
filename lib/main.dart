@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:curso_arcgis_flutter/config/app_theme.dart';
 
 Future<void> main() async {
   await dotenv.load();
@@ -13,10 +14,9 @@ Future<void> main() async {
   runApp(
     MaterialApp(
         debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.red.shade900),
-          useMaterial3: true,
-        ),
+        theme: customLightTheme(), // Apply your custom light theme here
+        darkTheme: customDarkTheme(), // Apply your custom dark theme here
+        themeMode: ThemeMode.system, // Use system theme mode
         home: BlocProvider(
           create: (context) => MapBloc(
             mapViewController: ArcGISMapView.createController(),

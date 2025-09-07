@@ -23,12 +23,14 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   }) : super(MapInitial()) {
     on<MapInitialized>(_onMapInitialized);
     on<GpsToggled>(_onGpsToggled);
-    on<ZoomIn>(_onZoomIn);
-    on<ZoomOut>(_onZoomOut);
 
     on<StartPolygonEditing>(_onStartPolygonEditing);
     on<SavePolygon>(_onSavePolygon);
     on<CancelEditing>(_onCancelEditing);
+    on<MapTapped>(_onMapTapped);
+    on<GraphicTapped>(_onGraphicTapped);
+    on<UndoGeometryEditor>(_onUndoGeometryEditor);
+    on<RedoGeometryEditor>(_onRedoGeometryEditor);
   }
 
   // Maneja el evento de inicialización del mapa.
@@ -78,43 +80,23 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     }
   }
 
-  void _onZoomIn(
-    ZoomIn event,
-    Emitter<MapState> emit,
-  ) {
-    // La acción de zoom es un efecto secundario, no necesita cambiar el estado.
-    final currentScale = mapViewController.scale;
-    mapViewController.setViewpointScale(currentScale / 2);
-    //no se hace emit porque no cambia el estado
-  }
-
-  void _onZoomOut(
-    ZoomOut event,
-    Emitter<MapState> emit,
-  ) {
-    // Corregimos la lógica para hacer zoom out.
-    final currentScale = mapViewController.scale;
-    mapViewController.setViewpointScale(currentScale * 2);
-    //no se hace emit porque no cambia el estado
-  }
-
-  void _onStartPolygonEditing(
-      StartPolygonEditing event, Emitter<MapState> emit) {
+  void _onStartPolygonEditing(StartPolygonEditing event, Emitter<MapState> emit) {
     if (state is MapLoadSuccess) {
-      final currentState = state as MapLoadSuccess;
+      if (geometryEditor.isStarted) {
+        geometryEditor.stop();
+        _graphicsOverlay.graphics.clear(); // Clear any previous edited graphic
+      }
       geometryEditor.startWithGeometryType(arcgis.GeometryType.polygon);
-      //Cambia el estado de isEditing ubicado en map_state
-      emit(currentState.copyWith(isEditing: true));
+      emit((state as MapLoadSuccess).copyWith(isEditing: true));
     }
   }
 
   void _onSavePolygon(SavePolygon event, Emitter<MapState> emit) {
     if (state is MapLoadSuccess) {
-      final currentState = state as MapLoadSuccess;
       final geometry = geometryEditor.geometry;
       if (geometry == null) {
         geometryEditor.stop();
-        emit(currentState.copyWith(isEditing: false));
+        emit((state as MapLoadSuccess).copyWith(isEditing: false));
         return;
       }
 
@@ -128,22 +110,71 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         ),
       );
 
-      final graphic = arcgis.Graphic(
-        geometry: geometry,
-        symbol: polygonSymbol,
-      );
+      // If editing an existing graphic, update its geometry. Otherwise, create a new one.
+      if (_graphicsOverlay.graphics.isNotEmpty && geometryEditor.geometry != null) {
+          final existingGraphic = _graphicsOverlay.graphics.first;
+          existingGraphic.geometry = geometry;
+      } else {
+          final graphic = arcgis.Graphic(
+              geometry: geometry,
+              symbol: polygonSymbol,
+          );
+          _graphicsOverlay.graphics.add(graphic);
+      }
 
-      _graphicsOverlay.graphics.add(graphic);
       geometryEditor.stop();
-      emit(currentState.copyWith(isEditing: false));
+      emit((state as MapLoadSuccess).copyWith(isEditing: false));
     }
   }
 
   void _onCancelEditing(CancelEditing event, Emitter<MapState> emit) {
     if (state is MapLoadSuccess) {
-      final currentState = state as MapLoadSuccess;
       geometryEditor.stop();
-      emit(currentState.copyWith(isEditing: false));
+      _graphicsOverlay.graphics.clear(); // Clear the graphic being edited/drawn
+      emit((state as MapLoadSuccess).copyWith(isEditing: false));
+    }
+  }
+
+  Future<void> _onMapTapped(MapTapped event, Emitter<MapState> emit) async {
+    if (state is MapLoadSuccess) {
+      if (geometryEditor.isStarted) {
+        // If geometry editor is active (drawing or editing), it automatically handles the tap
+      } else {
+        final identifyGraphicsOverlayResult = await mapViewController.identifyGraphicsOverlay(
+            _graphicsOverlay,
+            screenPoint: Offset(event.point.dx, event.point.dy),
+            tolerance: 10, // tolerance
+            returnPopupsOnly: false, // returnPopupsOnly
+        );
+
+        if (identifyGraphicsOverlayResult.graphics.isNotEmpty) {
+            add(GraphicTapped(identifyGraphicsOverlayResult.graphics.first));
+        }
+      }
+    }
+  }
+
+  Future<void> _onGraphicTapped(GraphicTapped event, Emitter<MapState> emit) async {
+    if (state is MapLoadSuccess) {
+      if (geometryEditor.isStarted) {
+        geometryEditor.stop();
+      }
+      _graphicsOverlay.graphics.clear(); // Clear existing graphics
+      geometryEditor.startWithGeometry(event.graphic.geometry!);
+      _graphicsOverlay.graphics.add(event.graphic); // Add the graphic back for editing visualization
+      emit((state as MapLoadSuccess).copyWith(isEditing: true));
+    }
+  }
+
+  void _onUndoGeometryEditor(UndoGeometryEditor event, Emitter<MapState> emit) {
+    if (geometryEditor.canUndo) {
+      geometryEditor.undo();
+    }
+  }
+
+  void _onRedoGeometryEditor(RedoGeometryEditor event, Emitter<MapState> emit) {
+    if (geometryEditor.canRedo) {
+      geometryEditor.redo();
     }
   }
 }

@@ -11,8 +11,9 @@ class EditFab extends StatelessWidget {
       mini: true,
       heroTag: 'edit_polygon',
       elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)), // Added shape
       onPressed: () => context.read<MapBloc>().add(StartPolygonEditing()),
-      child: const Icon(Icons.edit_outlined),
+      child: Icon(Icons.edit_outlined),
     );
   }
 }
