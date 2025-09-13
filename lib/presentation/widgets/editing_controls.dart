@@ -20,7 +20,7 @@ class EditingControls extends StatelessWidget {
         height: 90, // Fixed height for the container
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20.0),
-          color: context.colorApp.primary.withAlpha(230),
+          color: context.colorApp.colorScheme.primary.withAlpha(230),
         ),
         padding: const EdgeInsets.symmetric(horizontal: 10.0),
         alignment: Alignment.center,

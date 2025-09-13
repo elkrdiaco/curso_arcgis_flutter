@@ -26,18 +26,18 @@ class MapAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       title: Text(
         'ArcGIS Maps SDK for Flutter',
-        style: TextStyle(fontSize: 16, color: context.colorApp.onPrimary),
+        style: TextStyle(fontSize: 16, color: context.colorApp.colorScheme.onPrimary),
       ),
       centerTitle: false,
-      backgroundColor: context.colorApp.primary,
+      backgroundColor: context.colorApp.colorScheme.primary,
       elevation: 2,
-      shadowColor: context.colorApp.shadow,
+      shadowColor: context.colorApp.colorScheme.shadow,
       actions: [
         IconButton(
           icon: const Icon(Icons.refresh_rounded),
-          color: context.colorApp.onPrimary,
+          color: context.colorApp.colorScheme.onPrimary,
           onPressed: () {
-            context.read<MapBloc>().add(MapInitialized());
+            context.read<MapBloc>().add(MapInitialized(context.colorApp.brightness));
           },
         ),
       ],
@@ -46,11 +46,13 @@ class MapAppBar extends StatelessWidget implements PreferredSizeWidget {
         icon: SvgPicture.asset(
           'assets/images/ic_layers.svg',
           colorFilter: ColorFilter.mode(
-            context.colorApp.onPrimary,
+            context.colorApp.colorScheme.onPrimary,
             BlendMode.srcIn,
           ),
         ),
-        onPressed: () {},
+        onPressed: () {
+          
+        },
       ),
     );
   }
@@ -71,9 +73,9 @@ class MapAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
       ],
       centerTitle: false,
-      backgroundColor: context.colorApp.primary, // Added for consistency
+      backgroundColor: context.colorApp.colorScheme.primary, // Added for consistency
       elevation: 2,
-      shadowColor: context.colorApp.shadow, // Added for consistency
+      shadowColor: context.colorApp.colorScheme.shadow, // Added for consistency
     );
   }
 

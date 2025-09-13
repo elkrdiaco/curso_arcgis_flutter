@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 // Define your main brand colors
 const Color primaryBlue = Color(0xFF3F51B5); // Adjusted Blue (Indigo 500)
-const Color primaryYellow = Color(0xFFFFC107); // Adjusted Yellow (Amber 500)
+const Color primaryYellow = Color(0xFFFFC107); 
 
 // Define your custom light theme
 ThemeData customLightTheme() {
