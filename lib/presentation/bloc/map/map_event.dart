@@ -16,6 +16,15 @@ class MapInitialized extends MapEvent {
   @override
   List<Object> get props => [brightness];
 }
+
+class UpdateBasemapStyle extends MapEvent {
+  final Brightness brightness;
+
+  const UpdateBasemapStyle(this.brightness);
+
+  @override
+  List<Object> get props => [brightness];
+}
 class GpsToggled extends MapEvent {}
 
 //Created events for polygon editing

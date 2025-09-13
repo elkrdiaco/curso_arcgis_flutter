@@ -15,12 +15,13 @@ class MapScreen extends StatefulWidget {
   State<MapScreen> createState() => _MapScreenState();
 }
 
-class _MapScreenState extends State<MapScreen> {
+class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
   late final MapBloc _mapBloc;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
 
     // --- Creación de Símbolos y Editor (se hace una sola vez) ---
     final vertexSymbol = SimpleMarkerSymbol(
@@ -122,7 +123,15 @@ class _MapScreenState extends State<MapScreen> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _mapBloc.close();
     super.dispose();
+  }
+
+  @override
+  void didChangePlatformBrightness() {
+    final brightness = View.of(context).platformDispatcher.platformBrightness;
+    _mapBloc.add(UpdateBasemapStyle(brightness));
+    super.didChangePlatformBrightness();
   }
 }

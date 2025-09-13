@@ -68,6 +68,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     required this.mapRepository,
   }) : super(MapInitial()) {
     on<MapInitialized>(_onMapInitialized);
+    on<UpdateBasemapStyle>(_onUpdateBasemapStyle);
     on<GpsToggled>(_onGpsToggled);
 
     on<StartPolygonEditing>(_onStartPolygonEditing);
@@ -370,5 +371,25 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   Future<void> close() {
     mapViewController.dispose();
     return super.close();
+  }
+
+  Future<void> _onUpdateBasemapStyle(
+    UpdateBasemapStyle event,
+    Emitter<MapState> emit,
+  ) async {
+    if (state is MapLoadSuccess) {
+      final basemapStyle = event.brightness == Brightness.dark
+          ? BasemapStyle.arcGISNavigationNight
+          : BasemapStyle.openStreets;
+
+      final newMap = ArcGISMap.withBasemapStyle(basemapStyle);
+
+      // Preservamos las capas operacionales existentes
+      final currentMap = mapViewController.arcGISMap;
+      if (currentMap != null) {
+        newMap.operationalLayers.addAll(currentMap.operationalLayers);
+      }
+      mapViewController.arcGISMap = newMap;
+    }
   }
 }
