@@ -86,15 +86,15 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
                     child: Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 8,
-                        vertical: 4,
+                        vertical: 8,
                       ),
                       decoration: BoxDecoration(
                         color: Colors.white.withAlpha(200),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Image.asset(
-                        'assets/images/logo_sica.png',
-                        height: 35,
+                        'assets/images/logo.png',
+                        height:25,
                       ),
                     ),
                   ),
