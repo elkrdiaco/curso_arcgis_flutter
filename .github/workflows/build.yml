@@ -14,8 +14,11 @@ jobs:
         with:
           fetch-depth: 0 
       - name: Create .env file
-        run: echo "${{ secrets.ENV_FILE }}" > .env
-        shell: bash # Shallow clones should be disabled for a better relevancy of analysis
+        run: |
+          touch .env
+          echo POSTGRES_USER=${POSTGRES_USER} >> .env
+          echo POSTGRES_PASSWORD=${POSTGRES_PASSWORD} >> .env
+          cat .env
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
