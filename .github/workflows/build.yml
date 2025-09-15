@@ -14,14 +14,13 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0 # Required to retrieve full history for SonarQube analysis
-
       - name: Analyze with SonarQube
         uses: SonarSource/sonarqube-scan-action@v5
         env:
