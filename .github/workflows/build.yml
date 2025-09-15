@@ -24,12 +24,10 @@ jobs:
       - name: Analyze with SonarQube
         uses: SonarSource/sonarqube-scan-action@v5
         env:
-          SONAR_TOKEN: ${{ vars.SONAR_TOKEN }}
-        with:
-          sources: '.'
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} # Use secrets for tokens
       - name: Create .env file from vars
         env:
-          ARCGIS_API_KEY: ${{ vars.ARCGIS_API_KEY }}
+          ARCGIS_API_KEY: ${{ secrets.ARCGIS_API_KEY }}
           URL_FEATURE_LAYER_POBLADOS_MARGARITA: ${{ vars.URL_FEATURE_LAYER_POBLADOS_MARGARITA }}
         run: |
           touch .env
