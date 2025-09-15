@@ -17,15 +17,15 @@ jobs:
     runs-on: macos-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
         with:
-          fetch-depth: 0  
-      - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@v3
+          fetch-depth: 0 # Required to retrieve full history for SonarQube analysis
+
+      - name: Analyze with SonarQube
+        uses: SonarSource/sonarqube-scan-action@v2.2 # Or the latest version
         env:
           SONAR_TOKEN: ${{ vars.SONAR_TOKEN }}
-        with:
-          projectBaseDir: repo1/
       - name: Create .env file from vars
         env:
           ARCGIS_API_KEY: ${{ vars.ARCGIS_API_KEY }}
