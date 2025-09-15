@@ -29,6 +29,8 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+      - name: Clean Flutter project
+        run: flutter clean
       - name: Get Flutter dependencies
         run: flutter pub get
       - name: Build android application
