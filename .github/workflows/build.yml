@@ -20,11 +20,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Required to retrieve full history for SonarQube analysis
-      - name: Analyze with SonarQube
-        uses: SonarSource/sonarqube-scan-action@v5
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} # Use secrets for tokens
+          fetch-depth: 0 # Required to retrieve full history for SonarQube analysis# Use secrets for tokens
       - name: Create .env file from vars
         env:
           ARCGIS_API_KEY: ${{ secrets.ARCGIS_API_KEY }}
@@ -34,6 +30,10 @@ jobs:
           echo "ARCGIS_API_KEY=$ARCGIS_API_KEY" > .env
           echo "URL_FEATURE_LAYER_POBLADOS_MARGARITA=$URL_FEATURE_LAYER_POBLADOS_MARGARITA" >> .env
           cat .env
+      - name: Analyze with SonarQube
+        uses: SonarSource/sonarqube-scan-action@v5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
