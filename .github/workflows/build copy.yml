@@ -43,3 +43,5 @@ jobs:
         uses: SonarSource/sonarqube-scan-action@master # Using master for latest updates
         env:
           SONAR_TOKEN: ${{ vars.SONAR_TOKEN }}
+
+          
