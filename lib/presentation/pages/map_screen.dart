@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:curso_arcgis_flutter/presentation/bloc/map/map_bloc.dart';
 import 'package:curso_arcgis_flutter/presentation/widgets/editing_controls.dart';
 import 'package:curso_arcgis_flutter/presentation/widgets/gps_control_button.dart';
