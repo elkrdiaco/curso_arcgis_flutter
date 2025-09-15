@@ -16,11 +16,11 @@ jobs:
       # The analysis requires to retrieve dependencies and build successfully
       - name: Build
         run: flutter pub
+      - name: Get Flutter dependencies
+        run: flutter pub get
+      #- name: Build android application
+      #  run: flutter build android --release
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v5
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      - name: Get Flutter dependencies
-        run: flutter pub get
-      - name: Build android application
-        run: flutter build android --release
