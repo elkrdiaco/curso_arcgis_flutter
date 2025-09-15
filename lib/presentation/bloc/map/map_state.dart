@@ -33,6 +33,7 @@ class MapInitial extends MapState {}
 // Estado que indica que el mapa se cargó correctamente.
 // Contiene las propiedades que la UI necesita para dibujarse.
 class MapLoadSuccess extends MapState {
+  final bool isMapReady;
   final bool isGpsEnabled;
   final bool isEditing;
   final List<LayerInfo> layers;
@@ -40,6 +41,7 @@ class MapLoadSuccess extends MapState {
   final bool isSelectionModeActive;
 
   const MapLoadSuccess({
+    this.isMapReady = false,
     this.isGpsEnabled = false, 
     this.isEditing = false, 
     this.layers = const [],
@@ -49,6 +51,7 @@ class MapLoadSuccess extends MapState {
 
   // Método para crear una copia del estado actual con valores modificados.
   MapLoadSuccess copyWith({
+    bool? isMapReady,
     bool? isGpsEnabled,
     bool? isEditing,
     List<LayerInfo>? layers,
@@ -56,6 +59,7 @@ class MapLoadSuccess extends MapState {
     bool? isSelectionModeActive,
   }) {
     return MapLoadSuccess(
+      isMapReady: isMapReady ?? this.isMapReady,
       isGpsEnabled: isGpsEnabled ?? this.isGpsEnabled,
       isEditing: isEditing ?? this.isEditing,
       layers: layers ?? this.layers,
@@ -64,5 +68,5 @@ class MapLoadSuccess extends MapState {
     );
   }
   @override
-  List<Object> get props => [isGpsEnabled, isEditing, layers, showLayersList, isSelectionModeActive];
+  List<Object> get props => [isMapReady, isGpsEnabled, isEditing, layers, showLayersList, isSelectionModeActive];
 }

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:curso_arcgis_flutter/presentation/bloc/map/map_bloc.dart';
 import 'package:curso_arcgis_flutter/presentation/widgets/editing_controls.dart';
 import 'package:curso_arcgis_flutter/presentation/widgets/gps_control_button.dart';
@@ -69,50 +71,54 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
                     MapTapped(Offset(screenPoint.dx, screenPoint.dy)),
                   ),
                 ),
-                if (state is MapLoadSuccess) ...[
-                  Positioned(bottom: 40, right: 10, child: const EditFab()),
-                  Positioned(
-                    top: 10,
-                    right: 10,
-                    child: GpsControlButton(
-                      isGpsEnabled: state.isGpsEnabled, 
-                      showLayersList: state.showLayersList,
-                      isSelectionModeActive: state.isSelectionModeActive,
-                    ),
-                  ),
-                  Positioned(
-                    top: 10,
-                    left: 10,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 8,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withAlpha(200),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Image.asset(
-                        'assets/images/logo.png',
-                        height:25,
-                      ),
-                    ),
-                  ),
-                  EditingControls(isEditing: state.isEditing),
-                  // Este ModalBarrier captura los toques fuera del panel de capas.
-                  if (state.showLayersList)
-                    ModalBarrier(
-                      dismissible: true,
-                      onDismiss: () {
-                        context.read<MapBloc>().add(ToggleLayersList());
-                      },
-                      color: Colors.transparent, // Lo hacemos invisible
-                    ),
-                  if (state.showLayersList)
-                    LayersListWidget(layers: state.layers),
-                ] else ...[
-                  const Center(child: LinearProgressIndicator()),
-                ],
+                // El BlocBuilder ahora solo gestiona los widgets que dependen del estado
+                BlocBuilder<MapBloc, MapState>(
+                  builder: (context, state) { 
+                    if (state is MapLoadSuccess) {
+                      // Si el mapa no está listo, muestra un indicador de carga circular.
+                      print("mapa listo: ${state.isMapReady}");
+                      if (!state.isMapReady) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      // Si el mapa está listo, muestra todos los controles.
+                      return Stack(
+                        children: [
+                          Positioned(bottom: 40, right: 10, child: const EditFab()),
+                          Positioned(
+                            top: 10,
+                            right: 10,
+                            child: GpsControlButton(
+                              isGpsEnabled: state.isGpsEnabled,
+                              showLayersList: state.showLayersList,
+                              isSelectionModeActive: state.isSelectionModeActive,
+                            ),
+                          ),
+                          Positioned(
+                            top: 10,
+                            left: 10,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withAlpha(200),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Image.asset('assets/images/logo.png', height: 25),
+                            ),
+                          ),
+                          EditingControls(isEditing: state.isEditing),
+                          if (state.showLayersList)
+                            ModalBarrier(
+                              dismissible: true,
+                              onDismiss: () => context.read<MapBloc>().add(ToggleLayersList()),
+                              color: Colors.transparent,
+                            ),
+                          if (state.showLayersList) LayersListWidget(layers: state.layers),
+                        ],
+                      );
+                    }
+                    return const Center(child: CircularProgressIndicator());// Return an empty widget if state is not MapLoadSuccess
+                  },
+                ),
               ],
             );
           },

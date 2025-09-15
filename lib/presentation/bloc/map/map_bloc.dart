@@ -10,50 +10,48 @@ import 'package:flutter/material.dart';
 part 'map_event.dart';
 part 'map_state.dart';
 
- // --- Símbolos ---
-  // Estos símbolos ahora están dentro del BLoC para un mejor encapsulamiento.
-
-  final _polygonSymbol = SimpleFillSymbol(
+class MapBloc extends Bloc<MapEvent, MapState> {
+  // --- Símbolos ---
+  // Se mueven aquí como `static const` para mejor encapsulamiento y rendimiento.
+  static final _polygonSymbol = SimpleFillSymbol(
     style: SimpleFillSymbolStyle.solid,
-    color: Colors.red.withAlpha(127),
+    color: Color.fromARGB(127, 244, 67, 54), // Colors.red.withAlpha(127)
     outline: SimpleLineSymbol(
       style: SimpleLineSymbolStyle.solid,
-      color: Colors.red,
+      color: Color(0xFFF44336), // Colors.red
       width: 2,
     ),
   );
 
-  final _polylineSymbol = SimpleLineSymbol(
+  static final _polylineSymbol = SimpleLineSymbol(
     style: SimpleLineSymbolStyle.solid,
-    color: Colors.blue.shade800,
+    color: Color(0xFF1976D2), // Colors.blue.shade800
     width: 2,
   );
 
-  final _pointSymbol = SimpleMarkerSymbol(
+  static final _pointSymbol = SimpleMarkerSymbol(
     style: SimpleMarkerSymbolStyle.circle,
-    color: Colors.black,
+    color: Color(0xFF000000), // Colors.black
     size: 12,
   );
 
-  final _editorFillPolygon = SimpleFillSymbol(
+  static final _editorFillPolygon = SimpleFillSymbol(
     style: SimpleFillSymbolStyle.solid,
-    color: Colors.red.shade200.withAlpha(130),
+    color: Color.fromARGB(130, 239, 154, 154), // Colors.red.shade200.withAlpha(130),
     outline: SimpleLineSymbol(
       style: SimpleLineSymbolStyle.solid,
-      color: Colors.red.shade700,
+      color: Color(0xFFC62828), // Colors.red.shade700
       width: 2,
     ),
   );
 
-  final _editorLine = SimpleLineSymbol(
+  static final _editorLine = SimpleLineSymbol(
     style: SimpleLineSymbolStyle.solid,
-    color: Colors.blue.shade700,
+    color: Color(0xFF1976D2), // Colors.blue.shade700
     width: 2,
   );
+  // --- Fin de Símbolos ---
 
-    // --- Fin de Símbolos ---
-
-class MapBloc extends Bloc<MapEvent, MapState> {
   ArcGISMapViewController mapViewController;
   GeometryEditor geometryEditor;
   final _polygonGraphicsOverlay = GraphicsOverlay();
@@ -83,6 +81,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     on<ToggleLayersList>(_onToggleLayersList);
     on<ToggleLayerVisibility>(_onToggleLayerVisibility);
     on<ToggleSelectionMode>(_onToggleSelectionMode);
+    on<MapRendered>(_onMapRendered);
   }
 
   // Maneja el evento de inicialización del mapa.
@@ -99,7 +98,21 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     final pobladosLayer = mapRepository.getPobladosLayer();
     map.operationalLayers.add(pobladosLayer);
     mapViewController.locationDisplay.dataSource = SystemLocationDataSource();
+
+    // 1. Asignamos el nuevo mapa al controlador.
     mapViewController.arcGISMap = map;
+
+    map.onLoadStatusChanged.listen((status) {
+      switch (status){
+        case LoadStatus.loaded:
+          add(MapRendered());
+          break;
+        default:
+          
+          break;
+      }
+    });
+
     mapViewController.setViewpoint(
       Viewpoint.withLatLongScale(
         latitude: 34.02700,
@@ -126,7 +139,11 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     ];
 
     // Emite el estado de éxito una vez que el mapa está configurado.
-    emit(MapLoadSuccess(isGpsEnabled: false, layers: allLayers));
+    emit(MapLoadSuccess(
+      isMapReady: false, // El mapa aún no ha terminado de cargar visualmente.
+      isGpsEnabled: false,
+      layers: allLayers,
+    ));
   }
 
   // Maneja el evento para activar/desactivar el GPS.
@@ -390,6 +407,15 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         newMap.operationalLayers.addAll(currentMap.operationalLayers);
       }
       mapViewController.arcGISMap = newMap;
+    }
+  }
+
+  Future<void> _onMapRendered(
+    MapRendered event,
+    Emitter<MapState> emit,
+  ) async {
+    if (state is MapLoadSuccess) {
+      emit((state as MapLoadSuccess).copyWith(isMapReady: true));
     }
   }
 }

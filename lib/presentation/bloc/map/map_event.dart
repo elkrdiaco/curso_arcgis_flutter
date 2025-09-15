@@ -68,3 +68,6 @@ class UndoGeometryEditor extends MapEvent {}
 class RedoGeometryEditor extends MapEvent {}
 
 class ToggleSelectionMode extends MapEvent {}
+
+// Evento que se dispara cuando el mapa ha terminado de renderizarse.
+class MapRendered extends MapEvent {}
