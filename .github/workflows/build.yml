@@ -14,11 +14,11 @@ jobs:
         with:
           fetch-depth: 0 
       - name: Create .env file
+        env: 
+          ARCGIS_API_KEY: ${{ secrets.ARCGIS_API_KEY }} 
+          URL_FEATURE_LAYER_POBLADOS_MARGARITA: ${{ secrets.URL_FEATURE_LAYER_POBLADOS_MARGARITA }}
         run: |
           touch .env
-          echo POSTGRES_USER=${POSTGRES_USER} >> .env
-          echo POSTGRES_PASSWORD=${POSTGRES_PASSWORD} >> .env
-          cat .env
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
