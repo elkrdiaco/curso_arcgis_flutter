@@ -23,8 +23,15 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
       - name: Create .env file
-        run: echo "${{ secrets.ENV_FILE }}" > .env
-        shell: bash
+        run: |
+          touch .env
+          echo ARCGIS_API_KEY=${ARCGIS_API_KEY} >> .env
+          echo URL_FEATURE_LAYER_POBLADOS_MARGARITA=${URL_FEATURE_LAYER_POBLADOS_MARGARITA} >> .env
+          cat .env
+        env: 
+          ARCGIS_API_KEY: ${{ secrets.ARCGIS_API_KEY }} 
+          URL_FEATURE_LAYER_POBLADOS_MARGARITA: ${{ secrets.URL_FEATURE_LAYER_POBLADOS_MARGARITA }}
+
       # The analysis requires to retrieve dependencies and build successfully
       - name: Get Flutter dependencies
         run: flutter pub get
