@@ -8,7 +8,7 @@ on:
 jobs:
   sonarqube:
     name: SonarQube
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
@@ -22,12 +22,15 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+      - name: Create .env file
+        run: echo "${{ secrets.ENV_FILE }}" > .env
+        shell: bash
       # The analysis requires to retrieve dependencies and build successfully
       - name: Get Flutter dependencies
         run: flutter pub get
       - name: Build android application
         run: flutter build apk --debug
       - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@master # Using master for latest updates
+        uses: SonarSource/sonarqube-scan-action@v2 # Pin to a major version for stability
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
