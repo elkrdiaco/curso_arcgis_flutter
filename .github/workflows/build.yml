@@ -8,7 +8,7 @@ on:
 jobs:
   sonarqube:
     name: SonarQube
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
         with:
@@ -23,21 +23,14 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
       - name: Create .env file
-        env: 
-          ARCGIS_API_KEY: ${{ secrets.ARCGIS_API_KEY }} 
-          URL_FEATURE_LAYER_POBLADOS_MARGARITA: ${{ secrets.URL_FEATURE_LAYER_POBLADOS_MARGARITA }}
-        run: |
-          touch .env
-          echo ARCGIS_API_KEY=${ARCGIS_API_KEY} >> .env
-          echo URL_FEATURE_LAYER_POBLADOS_MARGARITA=${URL_FEATURE_LAYER_POBLADOS_MARGARITA} >> .env
-          cat .env
-
+        run: echo "${{ secrets.ENV_FILE }}" > .env
+        shell: bash
       # The analysis requires to retrieve dependencies and build successfully
       - name: Get Flutter dependencies
         run: flutter pub get
       - name: Build android application
         run: flutter build apk --debug
       - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@v2 # Pin to a major version for stability
+        uses: SonarSource/sonarqube-scan-action@master # Using master for latest updates
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
