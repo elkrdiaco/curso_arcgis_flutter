@@ -15,8 +15,8 @@ jobs:
           fetch-depth: 0 
       - name: Create .env file from secrets
         run: |
-          echo "ARCGIS_API_KEY=${{ secrets.ARCGIS_API_KEY }}" > .env
-          echo "URL_FEATURE_LAYER_POBLADOS_MARGARITA=${{ secrets.URL_FEATURE_LAYER_POBLADOS_MARGARITA }}" >> .env
+          echo "ARCGIS_API_KEY=${{ vars.ARCGIS_API_KEY }}" > .env
+          echo "URL_FEATURE_LAYER_POBLADOS_MARGARITA=${{ vars.URL_FEATURE_LAYER_POBLADOS_MARGARITA }}" >> .env
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
@@ -31,8 +31,8 @@ jobs:
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@master # Using master for latest updates
         env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_TOKEN: ${{ vars.SONAR_TOKEN }}
       - name: Build android application
-        run: flutter build apk --release
+        run: flutter build apk --debug
       - name: Build iOS application
-        run: flutter build ios --release --no-codesign
+        run: flutter build ios --debug --no-codesign
