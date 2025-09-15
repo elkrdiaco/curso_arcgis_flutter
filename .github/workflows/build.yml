@@ -14,7 +14,7 @@ on:
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
@@ -23,9 +23,11 @@ jobs:
           fetch-depth: 0 # Required to retrieve full history for SonarQube analysis
 
       - name: Analyze with SonarQube
-        uses: SonarSource/sonarqube-scan-action@v2.2 # Or the latest version
+        uses: SonarSource/sonarqube-scan-action@v5
         env:
           SONAR_TOKEN: ${{ vars.SONAR_TOKEN }}
+        with:
+          sources: '.'
       - name: Create .env file from vars
         env:
           ARCGIS_API_KEY: ${{ vars.ARCGIS_API_KEY }}
