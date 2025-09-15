@@ -31,11 +31,11 @@ jobs:
           distribution: 'temurin'
       - name: Get Flutter dependencies
         run: flutter pub get
-      - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@master # Using master for latest updates
-        env:
-          SONAR_TOKEN: ${{ vars.SONAR_TOKEN }}
       - name: Build android application
         run: flutter build apk --debug
       - name: Build iOS application
         run: flutter build ios --debug --no-codesign
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@master # Using master for latest updates
+        env:
+          SONAR_TOKEN: ${{ vars.SONAR_TOKEN }}
