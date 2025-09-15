@@ -24,13 +24,9 @@ jobs:
           fetch-depth: 0 # Required to retrieve full history for SonarQube analysis
       - name: Create .env file
         run: |
-          echo "ARCGIS_API_KEY=${{ secrets.ARCGIS_API_KEY }}" > .env
+          echo "ARCGIS_API_KEY=${{ vars.ARCGIS_API_KEY }}" > .env
           echo "URL_FEATURE_LAYER_POBLADOS_MARGARITA=${{ vars.URL_FEATURE_LAYER_POBLADOS_MARGARITA }}" >> .env
           cat .env
-      - name: Analyze with SonarQube
-        uses: SonarSource/sonarqube-scan-action@v5
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
@@ -44,7 +40,11 @@ jobs:
         run: flutter clean
       - name: Get Flutter dependencies
         run: flutter pub get
-      #- name: Build android application
-      #  run: flutter build apk --debug
+      - name: Build android application
+        run: flutter build apk --debug
       #- name: Build iOS application
       # run: flutter build ios --debug --no-codesign
+      - name: Analyze with SonarQube
+        uses: SonarSource/sonarqube-scan-action@v5
+        env:
+          SONAR_TOKEN: ${{ vars.SONAR_TOKEN }} 
