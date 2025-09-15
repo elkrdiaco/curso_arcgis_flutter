@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:curso_arcgis_flutter/presentation/bloc/map/map_bloc.dart';
 import 'package:curso_arcgis_flutter/presentation/widgets/editing_controls.dart';
 import 'package:curso_arcgis_flutter/presentation/widgets/gps_control_button.dart';
@@ -76,7 +74,6 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
                   builder: (context, state) { 
                     if (state is MapLoadSuccess) {
                       // Si el mapa no está listo, muestra un indicador de carga circular.
-                      print("mapa listo: ${state.isMapReady}");
                       if (!state.isMapReady) {
                         return const Center(child: CircularProgressIndicator());
                       }
