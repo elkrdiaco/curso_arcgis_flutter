@@ -10,11 +10,17 @@ jobs:
     runs-on: macos-latest
     environment: development
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0  
       - name: SonarQubeScan
         uses: SonarSource/sonarqube-scan-action@v5
+        with:
+          args: >
+            -Dsonar.c.file.suffixes=-
+            -Dsonar.cpp.file.suffixes=-
+            -Dsonar.objc.file.suffixes=-
         env: 
           SONAR_TOKEN: ${{ vars.SONAR_TOKEN }}
 
@@ -64,4 +70,3 @@ jobs:
 
       #- name: Build iOS application
       # run: flutter build ios --debug --no-codesign
-
