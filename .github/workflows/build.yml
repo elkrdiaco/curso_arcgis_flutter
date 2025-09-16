@@ -41,9 +41,9 @@ jobs:
       - name: Accept Android Licenses
         run: yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses > /dev/null
       - name: Install NDK and CMake
-        run: $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --install "ndk;25.2.9519653" "cmake;3.22.1"
-      - name: Clean Flutter project
-        run: flutter clean
+        run: $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --install "ndk;27.0.12077973" "cmake;3.22.1"
+      #- name: Clean Flutter project
+      #  run: flutter clean
       - name: Get Flutter dependencies
         run: flutter pub get
       - name: Build android application
