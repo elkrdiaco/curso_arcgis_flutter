@@ -25,6 +25,9 @@ jobs:
           cat .env
       - name: Get Flutter dependencies
         run: flutter pub get
+        env:
+          ARCGIS_USERNAME: ${{ vars.ARCGIS_USERNAME }}
+          ARCGIS_PASSWORD: ${{ vars.ARCGIS_PASSWORD }}
       - name: Run Flutter tests and generate coverage
         run: flutter test --coverage
       - name: SonarQubeScan
@@ -76,6 +79,9 @@ jobs:
 
       - name: Get Flutter dependencies
         run: flutter pub get
+        env:
+          ARCGIS_USERNAME: ${{ vars.ARCGIS_USERNAME }}
+          ARCGIS_PASSWORD: ${{ vars.ARCGIS_PASSWORD }}
 
       - name: Build android application
         run: flutter build apk --debug
