@@ -18,9 +18,7 @@ jobs:
         uses: SonarSource/sonarqube-scan-action@v5
         with:
           args: >
-            -Dsonar.c.file.suffixes=-
-            -Dsonar.cpp.file.suffixes=-
-            -Dsonar.objc.file.suffixes=-
+            -Dsonar.sources=lib
         env: 
           SONAR_TOKEN: ${{ vars.SONAR_TOKEN }}
 
