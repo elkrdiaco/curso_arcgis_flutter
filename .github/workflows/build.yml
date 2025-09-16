@@ -60,7 +60,7 @@ jobs:
         run: flutter pub get
 
       - name: Build android application
-        run: flutter build apk --debug --verbose
+        run: flutter build apk --debug
 
       #- name: Build iOS application
       # run: flutter build ios --debug --no-codesign
