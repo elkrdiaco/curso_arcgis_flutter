@@ -1,3 +1,4 @@
+import 'package:curso_arcgis_flutter/config/app_config.dart';
 import 'package:curso_arcgis_flutter/presentation/pages/map_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:arcgis_maps/arcgis_maps.dart';
@@ -6,8 +7,7 @@ import 'package:curso_arcgis_flutter/config/app_theme.dart';
 
 Future<void> main() async {
   await dotenv.load();
-  ArcGISEnvironment.apiKey = dotenv.env['ARCGIS_API_KEY'] ?? 'ARCGIS_API_KEY_TEXT';
-
+  ArcGISEnvironment.apiKey = AppConfig().arcgisApiKey;
   runApp(
     const MainApp(),
   );
