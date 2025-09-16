@@ -11,14 +11,23 @@ jobs:
     environment: development
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0  
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+      - name: Get Flutter dependencies
+        run: flutter pub get
+      - name: Run Flutter tests and generate coverage
+        run: flutter test --coverage
       - name: SonarQubeScan
         uses: SonarSource/sonarqube-scan-action@v5
         with:
           args: >
             -Dsonar.sources=lib
+            -Dsonar.dart.coverage.reportPaths=coverage/lcov.info
         env: 
           SONAR_TOKEN: ${{ vars.SONAR_TOKEN }}
 
