@@ -1,21 +1,48 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:curso_arcgis_flutter/main.dart';
+
+// Puedes importar widgets de tu aplicación para probarlos individualmente.
+// import 'package:curso_arcgis_flutter/presentation/widgets/my_custom_button.dart';
 
 void main() {
-  testWidgets('Smoke test: App starts without crashing', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    // If your main app widget is not named 'MyApp', please change it here.
-    await tester.pumpWidget(const MainApp());
+  // Un grupo de Tests Unitarios
+  // Los tests unitarios no renderizan ninguna UI. Sirven para probar lógica pura de Dart,
+  // como funciones, clases o BLoCs.
+  group('Simple Math Unit Tests', () {
+    test('La suma funciona', () {
+      expect(1 + 1, 2);
+    });
+    
+    test('La resta funciona', () {
+      expect(5 - 3, 2);
+    });
+  });
 
-    // A basic test can simply verify that the app doesn't throw an error during build.
-    // For a more robust test, you would verify that a specific widget is visible.
-    // For example: expect(find.text('Hello World'), findsOneWidget);
+  // Un grupo de Tests de Widgets
+  // Los tests de widgets sirven para probar widgets individuales o pantallas de forma aislada.
+  group('Simple Widget Tests', () {
+    testWidgets('Encuentra un widget de Texto', (WidgetTester tester) async {
+      // Define un widget simple para probar.
+      const testWidget = MaterialApp(
+        home: Scaffold(
+          body: Text('Hola, Mundo!'),
+        ),
+      );
+
+      // Construye el widget.
+      await tester.pumpWidget(testWidget);
+
+      // Verifica que el widget de Texto está en pantalla.
+      expect(find.text('Hola, Mundo!'), findsOneWidget);
+    });
+
+    testWidgets('Encuentra un widget de Icono', (WidgetTester tester) async {
+      // Define otro widget simple para probar.
+      const testWidget = MaterialApp(
+        home: Scaffold(body: Icon(Icons.add)),
+      );
+      await tester.pumpWidget(testWidget);
+      expect(find.byIcon(Icons.add), findsOneWidget);
+    });
   });
 }

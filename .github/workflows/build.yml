@@ -47,11 +47,11 @@ jobs:
         with:
           fetch-depth: 0 
           
-      #- name: Create .env file
-      #  run: |
-      #    echo "ARCGIS_API_KEY=${{ vars.ARCGIS_API_KEY }}" > .env
-      #    echo "URL_FEATURE_LAYER_POBLADOS_MARGARITA=${{ vars.URL_FEATURE_LAYER_POBLADOS_MARGARITA }}" >> .env
-      #    cat .env
+      - name: Create .env file
+        run: |
+          echo "ARCGIS_API_KEY=${{ vars.ARCGIS_API_KEY }}" > .env
+          echo "URL_FEATURE_LAYER_POBLADOS_MARGARITA=${{ vars.URL_FEATURE_LAYER_POBLADOS_MARGARITA }}" >> .env
+          cat .env
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
