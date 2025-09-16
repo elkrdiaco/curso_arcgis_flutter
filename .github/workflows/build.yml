@@ -47,7 +47,7 @@ jobs:
       - name: Get Flutter dependencies
         run: flutter pub get
       - name: Build android application
-        run: flutter build apk --debug
+        run: flutter build apk --debug --verbose
       #- name: Build iOS application
       # run: flutter build ios --debug --no-codesign
       - name: Analyze with SonarQube
