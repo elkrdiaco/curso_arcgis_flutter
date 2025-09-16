@@ -16,7 +16,7 @@ jobs:
       - name: SonarQubeScan
         uses: SonarSource/sonarqube-scan-action@v5
         env: 
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_TOKEN: ${{ vars.SONAR_TOKEN }}
 
   build:
     runs-on: macos-latest
